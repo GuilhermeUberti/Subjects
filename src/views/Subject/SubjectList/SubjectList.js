@@ -10,16 +10,22 @@ import {
 } from 'reactstrap'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { thunkFetchSubjectList } from './../../../actions/Subject/SubjectThunk';
+import { thunkFetchSubjectList, thunkDeleteSubject } from './../../../actions/Subject/SubjectThunk';
 
 class SubjectList extends Component {
     constructor(props) {
         super(props)
+
+        this.handleDeleteSubject = this.handleDeleteSubject.bind(this);
     }
 
     componentDidMount() {
         this.props.fetchSubjectList();
-    }
+    };
+
+    handleDeleteSubject(subject) {
+        return this.props.deleteSubject(subject);
+    };
 
     render() {
         console.log(this.props.subjectList);
@@ -45,10 +51,10 @@ class SubjectList extends Component {
                                     <tbody>
                                         {subjectList.subjects.map((subject, index) => (
                                             <tr key={subject._id}>
-                                                <td>{ subject.name }</td>
-                                                <td>{ subject.description }</td>
+                                                <td>{subject.name}</td>
+                                                <td>{subject.description}</td>
                                                 <td>
-                                                    <Button color="warning">Deletar</Button>
+                                                    <Button color="danger" onClick={() => this.handleDeleteSubject(subject)}>Deletar</Button>
                                                 </td>
                                             </tr>
                                         ))}
@@ -65,13 +71,15 @@ class SubjectList extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        subjectList: state.subjectStore.subjectList
+        subjectList: state.subjectStore.subjectList,
+        deleteSubject: state.subjectStore.deleteSubject
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        fetchSubjectList: () => dispatch(thunkFetchSubjectList())
+        fetchSubjectList: () => dispatch(thunkFetchSubjectList()),
+        deleteSubject: (subject) => dispatch(thunkDeleteSubject(subject))
     }
 }
 
